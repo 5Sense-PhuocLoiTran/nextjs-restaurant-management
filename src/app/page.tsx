@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 export default function Home() {
@@ -50,6 +51,8 @@ export default function Home() {
             Read our docs
           </a>
         </div>
+
+        <Button variant="outline" className="bg-yellow-500">Get Started</Button>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a
