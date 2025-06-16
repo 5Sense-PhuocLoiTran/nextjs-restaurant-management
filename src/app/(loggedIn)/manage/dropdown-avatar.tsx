@@ -1,5 +1,11 @@
 'use client'
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -7,25 +13,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { useLogoutMutation } from '@/queries/useAuth'
 import { handleErrorApi } from '@/lib/utils'
+import { useAccountProfile } from '@/queries/useAccount'
+import { useLogoutMutation } from '@/queries/useAuth'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-
-const account = {
-  name: 'Nudo Tran',
-  avatar: 'https://i.pravatar.cc/150',
-}
 
 export default function DropdownAvatar() {
   const logoutMutation = useLogoutMutation()
   const router = useRouter()
+  const { data } = useAccountProfile()
+  const account = data?.payload.data
 
   const logout = async () => {
     try {
@@ -49,18 +47,18 @@ export default function DropdownAvatar() {
         >
           <Avatar>
             <AvatarImage
-              src={account.avatar ?? undefined}
-              alt={account.name}
+              src={account?.avatar ?? undefined}
+              alt={account?.name}
             />
             <AvatarFallback>
-              {account.name.slice(0, 2).toUpperCase()}
+              {account?.name.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          {account.name}
+          {account?.name}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
