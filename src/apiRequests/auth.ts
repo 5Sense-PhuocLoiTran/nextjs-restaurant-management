@@ -1,10 +1,16 @@
-import http from "@/lib/http";
-import { LoginBodyType, LoginResType } from "@/schemaValidations/auth.schema";
+import http from '@/lib/http'
+import {
+  LoginBodyType,
+  LoginResType,
+} from '@/schemaValidations/auth.schema'
 
 const authApiRequests = {
-  sLogin: (body: LoginBodyType) => http.post<LoginResType>("/auth/login", body),
-  Login: (body: LoginBodyType) =>
-    http.post<LoginResType>("/auth/login", body, { baseUrl: "" })
-};
+  sLogin: (body: LoginBodyType) =>
+    http.post<LoginResType>('/auth/login', body),
+  login: (body: LoginBodyType) =>
+    http.post<LoginResType>('/api/auth/login', body, {
+      baseUrl: '',
+    }),
+}
 
-export default authApiRequests;
+export default authApiRequests
