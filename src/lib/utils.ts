@@ -32,7 +32,17 @@ export const handleErrorApi = ({
   } else {
     toast.error(error.message, {
       duration: duration || 3000,
-      description: error.payload?.message || 'An unexpected error occurred.',
+      description:
+        error.payload?.message ||
+        'An unexpected error occurred.',
     })
   }
 }
+
+const isBrowser = typeof window !== 'undefined'
+
+export const getAccessTokenFromLocalStorage = () =>
+  isBrowser ? localStorage.getItem('accessToken') : null
+
+export const getRefreshTokenFromLocalStorage = () =>
+  isBrowser ? localStorage.getItem('refreshToken') : null
