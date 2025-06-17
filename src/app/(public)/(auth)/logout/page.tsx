@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { getRefreshTokenFromLocalStorage } from '@/lib/utils'
+import {
+  getAccessTokenFromLocalStorage,
+  getRefreshTokenFromLocalStorage,
+} from '@/lib/utils'
 import { useLogoutMutation } from '@/queries/useAuth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef } from 'react'
@@ -12,11 +15,15 @@ export default function Logout() {
   const ref = useRef<any>(null)
   const searchParams = useSearchParams()
   const refreshTokenFromUrl = searchParams.get('refreshToken')
+  const accessTokenFromUrl = searchParams.get('accessToken')
 
   useEffect(() => {
     if (
       ref.current ||
-      refreshTokenFromUrl !== getRefreshTokenFromLocalStorage()
+      (refreshTokenFromUrl &&
+        refreshTokenFromUrl !== getRefreshTokenFromLocalStorage()) ||
+      (accessTokenFromUrl &&
+        accessTokenFromUrl !== getAccessTokenFromLocalStorage())
     ) {
       return
     }

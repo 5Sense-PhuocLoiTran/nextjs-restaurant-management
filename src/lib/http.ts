@@ -141,6 +141,9 @@ const request = async <Response>(
           }
         }
       } else {
+        // Case: accesstoken van con han
+        // call api o nextjs server(route handler, server component) den server back
+        
         const accessToken = (options?.headers as any)?.Authorization.split(
           "Bearer "
         )[1];
