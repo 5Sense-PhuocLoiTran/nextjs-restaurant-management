@@ -17,6 +17,12 @@ export const useUpdateMeMutation = () => {
   })
 }
 
+export const useChangePasswordMutation = () => {
+  return useMutation({
+    mutationFn: accountApiRequest.changePassword,
+  })
+}
+
 // import accountApiRequest from '@/apiRequests/account'
 // import { AccountResType } from '@/schemaValidations/account.schema'
 // import { useQuery } from '@tanstack/react-query'

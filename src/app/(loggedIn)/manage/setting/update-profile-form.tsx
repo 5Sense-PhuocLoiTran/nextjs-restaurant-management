@@ -61,7 +61,6 @@ export default function UpdateProfileForm() {
   }
 
   const onSubmit = async (values: UpdateMeBodyType) => {
-    if (updateMeMutation.isPending) return
     let body = values
     try {
       if (avatarFile) {
@@ -199,8 +198,14 @@ export default function UpdateProfileForm() {
                 >
                   Hủy
                 </Button>
-                <Button size="sm" type="submit">
-                  Lưu thông tin
+                <Button
+                  size="sm"
+                  type="submit"
+                  disabled={updateMeMutation.isPending}
+                >
+                  {updateMeMutation.isPending
+                    ? 'Đang cập nhật...'
+                    : 'Lưu thông tin'}
                 </Button>
               </div>
             </div>

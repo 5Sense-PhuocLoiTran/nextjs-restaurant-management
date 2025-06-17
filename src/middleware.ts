@@ -7,28 +7,33 @@ const UNAUTHENTICATED_PATHS = ['/login']
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  const isAuthenticated = Boolean(
-    request.cookies.get('accessToken')?.value
-  )
+  const accessToken = request.cookies.get('accessToken')?.value
+  const refreshToken = request.cookies.get('refreshToken')?.value
+
+  // Chua dang nhap thi khong cho vao private path
   if (
-    PRIVATE_PATHS.some((path) =>
-      pathname.startsWith(path)
-    ) &&
-    !isAuthenticated
+    PRIVATE_PATHS.some((path) => pathname.startsWith(path)) &&
+    !refreshToken
   ) {
-    // Redirect to login if trying to access a private path without authentication
-    return NextResponse.redirect(
-      new URL('/login', request.url)
-    )
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
+  // dang nhap roi, nhung accessToken het han
   if (
-    UNAUTHENTICATED_PATHS.some((path) =>
-      pathname.startsWith(path)
-    ) &&
-    isAuthenticated
+    PRIVATE_PATHS.some((path) => pathname.startsWith(path)) &&
+    !accessToken &&
+    refreshToken
   ) {
-    // Redirect to home if trying to access a public path while authenticated
+    const url = new URL('/logout', request.url)
+    url.searchParams.set('refreshToken', refreshToken ?? '')
+    return NextResponse.redirect(url)
+  }
+
+  // Dang nhap roi, khong cho vao login page
+  if (
+    UNAUTHENTICATED_PATHS.some((path) => pathname.startsWith(path)) &&
+    refreshToken
+  ) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
