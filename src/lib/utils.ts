@@ -85,7 +85,7 @@ export const checkAndRefreshToken = async (params?: {
     exp: number
     iat: number
   }
-  const decodedRefreshToken = jwt.decode(refreshToken) as { 
+  const decodedRefreshToken = jwt.decode(refreshToken) as {
     exp: number
     iat: number
   }

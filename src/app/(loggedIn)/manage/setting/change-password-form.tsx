@@ -42,6 +42,7 @@ export default function ChangePasswordForm() {
       toast.success(result.payload.message || 'Đổi mật khẩu thành công')
       form.reset()
     } catch (error) {
+      console.error('Error in change password:', error)
       handleErrorApi({
         error,
         setError: form.setError,

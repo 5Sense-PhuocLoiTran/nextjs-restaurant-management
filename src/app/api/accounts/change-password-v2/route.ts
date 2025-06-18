@@ -51,6 +51,7 @@ export async function PUT(request: Request) {
 
     return Response.json(payload)
   } catch (error: any) {
+    console.error('Error in change password v2:', error)
     return Response.json(
       {
         message: error.message ? error.message : 'Unknown error',
