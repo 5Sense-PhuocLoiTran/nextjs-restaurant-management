@@ -115,6 +115,7 @@ export default function EditEmployee({
   const resetForm = () => {
     setFile(null)
     form.reset()
+    setId(undefined)
   }
 
   return (
@@ -123,6 +124,7 @@ export default function EditEmployee({
       onOpenChange={(value) => {
         if (!value) {
           setId(undefined)
+          resetForm()
         }
       }}
     >
