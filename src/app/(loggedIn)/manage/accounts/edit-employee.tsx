@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -9,8 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { handleErrorApi } from '@/lib/utils'
+import { useGetAccount, useUpdateAccountMutation } from '@/queries/useAccount'
+import { useUploadMediaMutation } from '@/queries/useMedia'
 import {
   UpdateEmployeeAccountBody,
   UpdateEmployeeAccountBodyType,
@@ -19,15 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Upload } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Switch } from '@/components/ui/switch'
-import { useGetAccount, useUpdateAccountMutation } from '@/queries/useAccount'
-import { useUploadMediaMutation } from '@/queries/useMedia'
-import { ca } from 'zod/v4/locales'
 import { toast } from 'sonner'
-import { on } from 'events'
-import { handleErrorApi } from '@/lib/utils'
 
 export default function EditEmployee({
   id,
