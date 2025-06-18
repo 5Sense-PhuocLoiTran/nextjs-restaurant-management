@@ -1,36 +1,19 @@
-'use client'
+import { Metadata } from 'next'
+import { Suspense } from 'react'
+import RefreshToken from './_components/page-content'
 
-import {
-  checkAndRefreshToken,
-  getRefreshTokenFromLocalStorage,
-} from '@/lib/utils'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+export const metadata: Metadata = {
+  title: 'Refresh token redirect',
+  description: 'Refresh token redirect',
+  robots: {
+    index: false,
+  },
+}
 
-export default function RefreshToken() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const refreshTokenFromUrl = searchParams.get('refreshToken')
-  const redirectPathNameFromUrl = searchParams.get('redirectPathName')
-
-  useEffect(() => {
-    if (
-      refreshTokenFromUrl &&
-      refreshTokenFromUrl === getRefreshTokenFromLocalStorage()
-    ) {
-      checkAndRefreshToken({
-        onSuccess: () => {
-          router.push(redirectPathNameFromUrl || '/')
-        },
-      })
-    } else {
-      router.push('/')
-    }
-  }, [, router, refreshTokenFromUrl, redirectPathNameFromUrl])
-
+export default function RefreshTokenPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      Refresh Token
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <RefreshToken />
+    </Suspense>
   )
 }
