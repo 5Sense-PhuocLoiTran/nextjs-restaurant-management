@@ -5,6 +5,11 @@ import Link from 'next/link'
 
 const menuItems = [
   {
+    title: 'Trang chủ',
+    href: '/',
+    authRequired: true,
+  },
+  {
     title: 'Món ăn',
     href: '/menu',
   },

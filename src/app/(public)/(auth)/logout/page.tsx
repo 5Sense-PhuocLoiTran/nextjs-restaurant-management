@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
+import { useAppContext } from '@/components/app-provider'
 import {
   getAccessTokenFromLocalStorage,
   getRefreshTokenFromLocalStorage,
@@ -16,7 +17,7 @@ export default function Logout() {
   const searchParams = useSearchParams()
   const refreshTokenFromUrl = searchParams.get('refreshToken')
   const accessTokenFromUrl = searchParams.get('accessToken')
-
+  const { setIsAuth } = useAppContext()
   useEffect(() => {
     if (
       !ref.current &&
@@ -30,12 +31,13 @@ export default function Logout() {
         setTimeout(() => {
           ref.current = null
         }, 1000)
+        setIsAuth(false)
         router.push('/login')
       })
     } else {
       router.push('/')
     }
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl])
+  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setIsAuth])
 
   return (
     <div className="min-h-screen flex items-center justify-center">
