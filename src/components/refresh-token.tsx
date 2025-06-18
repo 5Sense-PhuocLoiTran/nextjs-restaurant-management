@@ -32,7 +32,7 @@ export default function RefreshToken() {
         onError: () => {
           clearInterval(interval)
           router.push('/login')
-        },
+        },  
       })
     }, TIMEOUT)
 

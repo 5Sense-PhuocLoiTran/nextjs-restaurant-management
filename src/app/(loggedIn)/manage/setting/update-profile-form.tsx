@@ -1,29 +1,12 @@
 'use client'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { handleErrorApi } from '@/lib/utils'
-import {
-  useAccountMe,
-  useUpdateMeMutation,
-} from '@/queries/useAccount'
+import { useAccountMe, useUpdateMeMutation } from '@/queries/useAccount'
 import { useUploadMediaMutation } from '@/queries/useMedia'
 import {
   UpdateMeBody,
@@ -36,11 +19,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 export default function UpdateProfileForm() {
-  const [avatarFile, setAvatarFile] = useState<File | null>(
-    null
-  )
-  const avatarInputRef =
-    React.useRef<HTMLInputElement>(null)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const avatarInputRef = React.useRef<HTMLInputElement>(null)
 
   const { data, refetch } = useAccountMe()
 
@@ -51,7 +31,7 @@ export default function UpdateProfileForm() {
     resolver: zodResolver(UpdateMeBody),
     defaultValues: {
       name: '',
-      avatar: '',
+      avatar: undefined,
     },
   })
 
@@ -66,24 +46,20 @@ export default function UpdateProfileForm() {
       if (avatarFile) {
         const formData = new FormData()
         formData.append('file', avatarFile)
-        const uploadAvatarResult =
-          await uploadMediaMutation.mutateAsync(formData)
-        const imageUploadUrl =
-          uploadAvatarResult.payload.data
+        const uploadAvatarResult = await uploadMediaMutation.mutateAsync(
+          formData
+        )
+        const imageUploadUrl = uploadAvatarResult.payload.data
         body = {
           ...values,
           avatar: imageUploadUrl,
         }
       }
 
-      const result = await updateMeMutation.mutateAsync(
-        body
-      )
+      const result = await updateMeMutation.mutateAsync(body)
 
       if (result) {
-        toast.success(
-          result.payload.message || 'Cập nhật thành công'
-        )
+        toast.success(result.payload.message || 'Cập nhật thành công')
       }
 
       refetch() // update the user avatar in dropdown menu
@@ -97,7 +73,7 @@ export default function UpdateProfileForm() {
       const { name, avatar } = data.payload.data
       form.reset({
         name,
-        avatar: avatar || '',
+        avatar: avatar ?? undefined,
       })
     }
   }, [data, form])
@@ -133,9 +109,7 @@ export default function UpdateProfileForm() {
                       <Avatar className="aspect-square w-[100px] h-[100px] rounded-md object-cover">
                         <AvatarImage src={previewAvatar} />
                         <AvatarFallback className="rounded-none">
-                          {name
-                            ? name.charAt(0).toUpperCase()
-                            : 'Avatar'}
+                          {name ? name.charAt(0).toUpperCase() : 'Avatar'}
                         </AvatarFallback>
                       </Avatar>
                       <input
@@ -148,8 +122,7 @@ export default function UpdateProfileForm() {
                           if (file) {
                             setAvatarFile(file)
                             field.onChange(
-                              'http://localhost:3000/ ' +
-                                field.name
+                              'http://localhost:3000/ ' + field.name
                             ) // Set a dummy value to trigger form validation zod shema
                           }
                         }}
@@ -157,14 +130,10 @@ export default function UpdateProfileForm() {
                       <button
                         className="flex aspect-square w-[100px] items-center justify-center rounded-md border border-dashed"
                         type="button"
-                        onClick={() =>
-                          avatarInputRef.current?.click()
-                        }
+                        onClick={() => avatarInputRef.current?.click()}
                       >
                         <Upload className="h-4 w-4 text-muted-foreground" />
-                        <span className="sr-only">
-                          Upload
-                        </span>
+                        <span className="sr-only">Upload</span>
                       </button>
                     </div>
                   </FormItem>
@@ -191,11 +160,7 @@ export default function UpdateProfileForm() {
               />
 
               <div className=" items-center gap-2 md:ml-auto flex">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  type="reset"
-                >
+                <Button variant="outline" size="sm" type="reset">
                   Hủy
                 </Button>
                 <Button

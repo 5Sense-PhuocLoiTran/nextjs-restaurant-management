@@ -1,12 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormField } from '@/components/ui/form'
 import {
   ChangePasswordBody,
@@ -15,7 +10,11 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useChangePasswordMutation } from '@/queries/useAccount'
-import { handleErrorApi } from '@/lib/utils'
+import {
+  handleErrorApi,
+  setAccessTokenToLocalStorage,
+  setRefreshTokenToLocalStorage,
+} from '@/lib/utils'
 import { toast } from 'sonner'
 import PasswordInputField from './_components/passwor-input-field'
 
@@ -35,11 +34,12 @@ export default function ChangePasswordForm() {
     if (changePasswordMutation.isPending) return
 
     try {
-      const result =
-        await changePasswordMutation.mutateAsync(data)
-      toast.success(
-        result.payload.message || 'Đổi mật khẩu thành công'
-      )
+      const result = await changePasswordMutation.mutateAsync(data)
+
+      setAccessTokenToLocalStorage(result.payload.data.accessToken)
+      setRefreshTokenToLocalStorage(result.payload.data.refreshToken)
+
+      toast.success(result.payload.message || 'Đổi mật khẩu thành công')
       form.reset()
     } catch (error) {
       handleErrorApi({
@@ -102,19 +102,10 @@ export default function ChangePasswordForm() {
               />
 
               <div className="flex items-center gap-2 md:ml-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  type="reset"
-                >
+                <Button variant="outline" size="sm" type="reset">
                   Hủy
                 </Button>
-                <Button
-                  size="sm"
-                  disabled={
-                    changePasswordMutation.isPending
-                  }
-                >
+                <Button size="sm" disabled={changePasswordMutation.isPending}>
                   {changePasswordMutation.isPending
                     ? 'Đang cập nhật...'
                     : 'Lưu thông tin'}
