@@ -59,7 +59,6 @@ export const UpdateEmployeeAccountBody = z
     changePassword: z.boolean().optional(),
     password: z.string().min(6).max(100).optional(),
     confirmPassword: z.string().min(6).max(100).optional(),
-    role: z.enum([Role.Owner, Role.Employee]).optional().default(Role.Employee),
   })
   .strict()
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
