@@ -15,7 +15,10 @@ export function middleware(request: NextRequest) {
     PRIVATE_PATHS.some((path) => pathname.startsWith(path)) &&
     !refreshToken
   ) {
-    return NextResponse.redirect(new URL('/', request.url))
+    const url = new URL('/login', request.url)
+    url.searchParams.set('clearToken', 'true')
+
+    return NextResponse.redirect(url)
   }
 
   // dang nhap roi, nhung accessToken het han

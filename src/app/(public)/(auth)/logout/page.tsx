@@ -19,28 +19,28 @@ export default function Logout() {
 
   useEffect(() => {
     if (
-      ref.current ||
-      (refreshTokenFromUrl &&
-        refreshTokenFromUrl !== getRefreshTokenFromLocalStorage()) ||
-      (accessTokenFromUrl &&
-        accessTokenFromUrl !== getAccessTokenFromLocalStorage())
+      !ref.current &&
+      ((refreshTokenFromUrl &&
+        refreshTokenFromUrl === getRefreshTokenFromLocalStorage()) ||
+        (accessTokenFromUrl &&
+          accessTokenFromUrl === getAccessTokenFromLocalStorage()))
     ) {
-      return
+      ref.current = mutateAsync
+      mutateAsync().then(() => {
+        setTimeout(() => {
+          ref.current = null
+        }, 1000)
+        router.push('/login')
+      })
+    } else {
+      router.push('/')
     }
-
-    ref.current = mutateAsync
-    mutateAsync().then(() => {
-      setTimeout(() => {
-        ref.current = null
-      }, 1000)
-
-      router.push('/login')
-    })
-  }, [mutateAsync, router, refreshTokenFromUrl])
+  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl])
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      Logout Page
+      <p className="text-lg">Đang đăng xuất...</p>
+      <p className="text-sm text-gray-500">Vui lòng đợi trong giây lát.</p>
     </div>
   )
 }

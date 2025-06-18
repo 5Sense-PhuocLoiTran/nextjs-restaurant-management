@@ -23,6 +23,8 @@ export default function RefreshToken() {
           router.push(redirectPathNameFromUrl || '/')
         },
       })
+    } else {
+      router.push('/')
     }
   }, [, router, refreshTokenFromUrl, redirectPathNameFromUrl])
 

@@ -1,4 +1,5 @@
 'use client'
+import { useAppContext } from '@/components/app-provider'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -7,28 +8,24 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { handleErrorApi } from '@/lib/utils'
 import { useLoginMutation } from '@/queries/useAuth'
-import {
-  LoginBody,
-  LoginBodyType,
-} from '@/schemaValidations/auth.schema'
+import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 export default function LoginForm() {
+  const { setIsAuth } = useAppContext()
   const loginMutation = useLoginMutation()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const clearToken = searchParams.get('clearToken')
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -37,12 +34,16 @@ export default function LoginForm() {
     },
   })
 
+  useEffect(() => {
+    if (clearToken) {
+      setIsAuth(false)
+    }
+  }, [clearToken, setIsAuth])
+
   const onSubmit = async (data: LoginBodyType) => {
     try {
       const result = await loginMutation.mutateAsync(data)
-      toast.success(
-        result.payload.message || 'Login successful'
-      )
+      toast.success(result.payload.message || 'Login successful')
       router.push('/manage/dashboard')
     } catch (error) {
       handleErrorApi({
@@ -55,21 +56,16 @@ export default function LoginForm() {
   return (
     <Card className="mx-auto max-w-md w-full">
       <CardHeader>
-        <CardTitle className="text-2xl">
-          Đăng nhập
-        </CardTitle>
+        <CardTitle className="text-2xl">Đăng nhập</CardTitle>
         <CardDescription>
-          Nhập email và mật khẩu của bạn để đăng nhập vào hệ
-          thống
+          Nhập email và mật khẩu của bạn để đăng nhập vào hệ thống
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit, () => {
-              toast.error(
-                'Please check the form for errors'
-              )
+              toast.error('Please check the form for errors')
             })}
             className="space-y-2 max-w-[600px] flex-shrink-0 w-full"
             noValidate
@@ -101,9 +97,7 @@ export default function LoginForm() {
                   <FormItem>
                     <div className="grid gap-2">
                       <div className="flex items-center">
-                        <Label htmlFor="password">
-                          Password
-                        </Label>
+                        <Label htmlFor="password">Password</Label>
                       </div>
                       <Input
                         id="password"
@@ -121,15 +115,9 @@ export default function LoginForm() {
                 className="w-full"
                 disabled={loginMutation.isPending}
               >
-                {loginMutation.isPending
-                  ? 'Đang đăng nhập...'
-                  : 'Đăng nhập'}
+                {loginMutation.isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
               </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                type="button"
-              >
+              <Button variant="outline" className="w-full" type="button">
                 Đăng nhập bằng Google
               </Button>
             </div>
