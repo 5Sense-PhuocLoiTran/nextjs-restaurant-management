@@ -53,6 +53,13 @@ export const setAccessTokenToLocalStorage = (token: string) =>
 export const setRefreshTokenToLocalStorage = (token: string) =>
   isBrowser ? localStorage.setItem('refreshToken', token) : null
 
+export const removeTokensFromLocalStorage = () => {
+  if (isBrowser) {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+  }
+}
+
 export const formatCurrency = (number: number) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -85,10 +92,13 @@ export const checkAndRefreshToken = async (params?: {
   // thoi diem het han toke tinh theo epoch time (s)
   // Dung new Date().getTime() thi reture epoch time (ms)
 
-  const now = Math.round(Date.now() / 1000) // epoch time in seconds
+  const now = Date.now() / 1000 - 1 // epoch time in seconds
 
   //Token da het han
-  if (decodedRefreshToken.exp <= now) return
+  if (decodedRefreshToken.exp <= now) {
+    removeTokensFromLocalStorage()
+    return params?.onError && params.onError()
+  }
 
   // ACTK thoi gian het han la 10s
   // kiem tra 1/3 thoi gian 3s thi RFTK

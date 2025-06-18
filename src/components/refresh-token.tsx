@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { checkAndRefreshToken } from '@/lib/utils'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 const UNAUTHORIZED_PATHS = ['/login', '/register', '/refresh-token']
 
 export default function RefreshToken() {
   const pathName = usePathname()
+  const router = useRouter()
   useEffect(() => {
     if (UNAUTHORIZED_PATHS.includes(pathName)) {
       return
@@ -21,6 +22,7 @@ export default function RefreshToken() {
     checkAndRefreshToken({
       onError: () => {
         clearInterval(interval)
+        router.push('/login')
       },
     })
     //timeout phai nho hon thoi gian het han ex ACTK 10s timeout -> interval nen set 1s
@@ -29,6 +31,7 @@ export default function RefreshToken() {
       checkAndRefreshToken({
         onError: () => {
           clearInterval(interval)
+          router.push('/login')
         },
       })
     }, TIMEOUT)
@@ -38,6 +41,6 @@ export default function RefreshToken() {
         clearInterval(interval)
       }
     }
-  }, [pathName])
+  }, [pathName, router])
   return null
 }
