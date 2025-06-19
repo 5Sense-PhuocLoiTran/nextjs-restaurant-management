@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Upload } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getVietnameseDishStatus } from '@/lib/utils'
+import { getVietnameseDishStatus, handleErrorApi } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -36,6 +36,9 @@ import {
 } from '@/schemaValidations/dish.schema'
 import { DishStatus, DishStatusValues } from '@/constants/type'
 import { Textarea } from '@/components/ui/textarea'
+import { useGetDishDetail, useUpdateDishMutation } from '@/queries/useDish'
+import { toast } from 'sonner'
+import { useUploadMediaMutation } from '@/queries/useMedia'
 
 export default function EditDish({
   id,
@@ -46,6 +49,15 @@ export default function EditDish({
 }) {
   const [file, setFile] = useState<File | null>(null)
   const imageInputRef = useRef<HTMLInputElement | null>(null)
+
+  const { data } = useGetDishDetail({
+    id: id as number,
+    enabled: Boolean(id),
+  })
+
+  const updateDishMutation = useUpdateDishMutation()
+  const uploadMediaMutation = useUploadMediaMutation()
+
   const form = useForm<UpdateDishBodyType>({
     resolver: zodResolver(UpdateDishBody),
     defaultValues: {
@@ -58,18 +70,76 @@ export default function EditDish({
   })
   const image = form.watch('image')
   const name = form.watch('name')
+
   const previewAvatarFromFile = useMemo(() => {
     if (file) {
       return URL.createObjectURL(file)
     }
     return image
   }, [file, image])
+
+  useEffect(() => {
+    if (data) {
+      const { name, description, price, image, status } = data.payload.data
+      console.log('data', status)
+
+      form.reset({
+        name,
+        description,
+        price,
+        image,
+        status,
+      })
+      setFile(null)
+    }
+  }, [data, form])
+
+  const onSubmit = async (values: UpdateDishBodyType) => {
+    try {
+      let body: UpdateDishBodyType & { id: number } = {
+        id: id as number,
+        ...values,
+      }
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const uploadImageResult = await uploadMediaMutation.mutateAsync(
+          formData
+        )
+        const imageUrl = uploadImageResult.payload.data
+
+        body = {
+          ...body,
+          image: imageUrl,
+        }
+      }
+      const result = await updateDishMutation.mutateAsync(body)
+
+      toast.success(result.payload.message)
+      setId(undefined)
+      form.reset()
+      setFile(null) // reset the file input
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError,
+      })
+    }
+  }
+
+  const resetForm = () => {
+    setFile(null)
+    form.reset()
+    setId(undefined)
+  }
+
   return (
     <Dialog
       open={Boolean(id)}
       onOpenChange={(value) => {
         if (!value) {
           setId(undefined)
+          resetForm() // reset the form when dialog is closed
         }
       }}
     >
@@ -85,6 +155,8 @@ export default function EditDish({
             noValidate
             className="grid auto-rows-max items-start gap-4 md:gap-8"
             id="edit-dish-form"
+            onReset={resetForm}
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="grid gap-4 py-4">
               <FormField
@@ -189,7 +261,7 @@ export default function EditDish({
                       <div className="col-span-3 w-full space-y-2">
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
@@ -205,7 +277,6 @@ export default function EditDish({
                           </SelectContent>
                         </Select>
                       </div>
-
                       <FormMessage />
                     </div>
                   </FormItem>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
@@ -46,12 +45,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formatCurrency, getVietnameseDishStatus } from '@/lib/utils'
+import {
+  formatCurrency,
+  getVietnameseDishStatus,
+  handleErrorApi,
+} from '@/lib/utils'
 import { DishListResType } from '@/schemaValidations/dish.schema'
 import { useSearchParams } from 'next/navigation'
 import { createContext, useContext, useEffect, useState } from 'react'
 import AddDish from './add-dish'
 import EditDish from './edit-dish'
+import { useDeleteDishMutation, useGetDishList } from '@/queries/useDish'
+import { toast } from 'sonner'
 
 type DishItem = DishListResType['data'][0]
 
@@ -154,6 +159,28 @@ function AlertDialogDeleteDish({
   dishDelete: DishItem | null
   setDishDelete: (value: DishItem | null) => void
 }) {
+  const deleteDishMutation = useDeleteDishMutation()
+
+  const handleDelete = async () => {
+    if (!dishDelete || !dishDelete.id) return
+    try {
+      const result = await deleteDishMutation.mutateAsync({
+        id: dishDelete?.id ?? -1,
+      })
+      if (result) {
+        setDishDelete(null)
+        toast.success(`Đã xóa món ăn ${dishDelete?.name} thành công`)
+      }
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: () => {
+          setDishDelete(null)
+        },
+      })
+    }
+  }
+
   return (
     <AlertDialog
       open={Boolean(dishDelete)}
@@ -176,7 +203,7 @@ function AlertDialogDeleteDish({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -190,7 +217,10 @@ export default function DishTable() {
   const pageIndex = page - 1
   const [dishIdEdit, setDishIdEdit] = useState<number | undefined>()
   const [dishDelete, setDishDelete] = useState<DishItem | null>(null)
-  const data: any[] = []
+
+  //Note GET DISH DATA HERE
+  const dishListQuery = useGetDishList()
+  const data = dishListQuery.data?.payload.data ?? []
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})

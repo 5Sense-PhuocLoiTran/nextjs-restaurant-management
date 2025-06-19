@@ -27,7 +27,9 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { DishStatus, DishStatusValues } from '@/constants/type'
-import { getVietnameseDishStatus } from '@/lib/utils'
+import { getVietnameseDishStatus, handleErrorApi } from '@/lib/utils'
+import { useAddDishMutation } from '@/queries/useDish'
+import { useUploadMediaMutation } from '@/queries/useMedia'
 import {
   CreateDishBody,
   CreateDishBodyType,
@@ -36,18 +38,23 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle, Upload } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 export default function AddDish() {
   const [file, setFile] = useState<File | null>(null)
   const [open, setOpen] = useState(false)
   const imageInputRef = useRef<HTMLInputElement | null>(null)
+
+  const addDishMutation = useAddDishMutation()
+  const uploadMediaMutation = useUploadMediaMutation()
+
   const form = useForm<CreateDishBodyType>({
     resolver: zodResolver(CreateDishBody),
     defaultValues: {
       name: '',
       description: '',
       price: 0,
-      image: '',
+      image: undefined,
       status: DishStatus.Unavailable,
     },
   })
@@ -59,6 +66,41 @@ export default function AddDish() {
     }
     return image
   }, [file, image])
+
+  const resetForm = () => {
+    form.reset()
+    setFile(null)
+  }
+
+  const onSubmit = async (values: CreateDishBodyType) => {
+    if (addDishMutation.isPending || uploadMediaMutation.isPending) return
+    let body = values
+    try {
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const uploadImageResult = await uploadMediaMutation.mutateAsync(
+          formData
+        )
+        const imageUploadUrl = uploadImageResult.payload.data
+        body = {
+          ...values,
+          image: imageUploadUrl,
+        }
+      }
+
+      const result = await addDishMutation.mutateAsync(body)
+
+      if (result) {
+        toast.success(result.payload.message || 'Tạo món ăn thành công')
+      }
+
+      resetForm() // reset the form
+      setOpen(false) // close the dialog
+    } catch (error) {
+      handleErrorApi({ error, setError: form.setError })
+    }
+  }
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -79,6 +121,8 @@ export default function AddDish() {
             noValidate
             className="grid auto-rows-max items-start gap-4 md:gap-8"
             id="add-dish-form"
+            onReset={resetForm}
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="grid gap-4 py-4">
               <FormField

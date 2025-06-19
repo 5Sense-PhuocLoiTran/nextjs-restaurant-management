@@ -44,6 +44,7 @@ export default function LoginForm() {
   }, [clearToken, setIsAuth, isAuth, router])
 
   const onSubmit = async (data: LoginBodyType) => {
+    if (loginMutation.isPending) return
     try {
       const result = await loginMutation.mutateAsync(data)
       toast.success(result.payload.message || 'Login successful')
