@@ -1,14 +1,14 @@
 'use client'
 
-import { formatCurrency } from '@/lib/utils'
-import { DishSchema } from '@/schemaValidations/dish.schema'
-import Image from 'next/image'
-import { useState } from 'react'
-import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from 'sonner' // dùng sonner để hiển thị thông báo
-import { PlusCircle } from 'lucide-react'
+import { formatCurrency } from '@/lib/utils'
+import { DishSchema } from '@/schemaValidations/dish.schema'
+import { Minus, Plus, PlusCircle } from 'lucide-react'
+import Image from 'next/image'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { z } from 'zod'
 
 type Dish = z.infer<typeof DishSchema>
 
@@ -25,6 +25,9 @@ const DishCard = ({ dish }: Props) => {
       `Đã thêm ${quantity} x ${dish.name} (${formatCurrency(total)})`
     )
   }
+
+  const increment = () => setQuantity((prev) => prev + 1)
+  const decrement = () => setQuantity((prev) => Math.max(1, prev - 1))
 
   return (
     <div className="border rounded-lg shadow hover:shadow-lg transition-shadow">
@@ -46,7 +49,7 @@ const DishCard = ({ dish }: Props) => {
             <p className="text-gray-600 mb-2">{dish.description}</p>
             <p className="text-base font-medium text-zinc-700">
               Đơn giá:{' '}
-              <span className="text-yellow-600 font-semibold">
+              <span className="text-yellow-500 font-semibold">
                 {formatCurrency(dish.price)}
               </span>
             </p>
@@ -60,16 +63,35 @@ const DishCard = ({ dish }: Props) => {
               >
                 Số lượng:
               </label>
-              <Input
-                id={`quantity-${dish.id}`}
-                type="number"
-                min={1}
-                value={quantity}
-                onChange={(e) =>
-                  setQuantity(Math.max(1, Number(e.target.value)))
-                }
-                className="w-20"
-              />
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  size="icon"
+                  onClick={decrement}
+                  className="bg-green-100 !text-green-600 hover:bg-green-200 transition-colors rounded-full"
+                >
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <Input
+                  id={`quantity-${dish.id}`}
+                  type="number"
+                  min={1}
+                  value={quantity}
+                  onChange={(e) =>
+                    setQuantity(Math.max(1, Number(e.target.value)))
+                  }
+                  className="w-16 text-center"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  onClick={increment}
+                  variant="outline"
+                  className="bg-green-600 !text-white hover:bg-green-700 transition-colors rounded-full"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
             <div className="text-green-600 text-lg font-bold">
               Tổng: {formatCurrency(dish.price * quantity)}
