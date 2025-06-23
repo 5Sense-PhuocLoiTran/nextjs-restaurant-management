@@ -11,8 +11,8 @@ const fontSans = FontSans({
   variable: '--font-sans',
 })
 export const metadata: Metadata = {
-  title: 'Nudo350 Restaurant',
-  description: 'The best restaurant in the Vietnam',
+  title: 'Tiệm Ăn Nhà Nudo350',
+  description: 'Tiệm Ăn Nhà Nudo350 - Quản lý bàn ăn và đặt món trực tuyến',
 }
 
 export default function RootLayout({

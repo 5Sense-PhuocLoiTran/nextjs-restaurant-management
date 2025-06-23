@@ -15,10 +15,10 @@ export default function Home() {
         />
         <div className="z-20 relative py-10 md:py-20 px-4 sm:px-10 md:px-20 text-white">
           <h1 className="text-center text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold">
-            Nhà hàng Nudo350
+            Tiệm Ăn Nhà Nudo350
           </h1>
           <p className="text-center text-sm sm:text-base mt-4">
-            Vị ngon, trọn khoảnh khắc
+            Vị ngon, trọn khoảnh khắc trong từng món ăn
           </p>
         </div>
       </div>
