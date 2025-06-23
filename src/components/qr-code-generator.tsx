@@ -33,6 +33,10 @@ export default function QrCodeGenerator({
       // Background
       canvasCtx.fillStyle = 'white'
       canvasCtx.fillRect(0, 0, size, height)
+      // Draw border around canvas
+      canvasCtx.strokeStyle = '#000'
+      canvasCtx.lineWidth = 2
+      canvasCtx.strokeRect(0, 0, size, height)
 
       // Text
       canvasCtx.font = '16px Arial'
@@ -64,10 +68,10 @@ export default function QrCodeGenerator({
 
       try {
         const qrCanvas = document.createElement('canvas')
-        qrCanvas.width = size
-        qrCanvas.height = size
+        qrCanvas.width = size - 2
+        qrCanvas.height = size - 2
         await QRCode.toCanvas(qrCanvas, value, { width: size })
-        canvasCtx.drawImage(qrCanvas, 0, 0)
+        canvasCtx.drawImage(qrCanvas, 1, 1, size - 2, size - 2)
       } catch (error) {
         console.error('QR Code generation failed:', error)
       }
