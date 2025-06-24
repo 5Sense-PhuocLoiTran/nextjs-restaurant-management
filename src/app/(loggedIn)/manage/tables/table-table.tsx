@@ -44,7 +44,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { getVietnameseTableStatus, handleErrorApi } from '@/lib/utils'
+import {
+  getTableLink,
+  getVietnameseTableStatus,
+  handleErrorApi,
+} from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
 import { TableListResType } from '@/schemaValidations/table.schema'
@@ -53,6 +57,7 @@ import AddTable from './add-table'
 import { useDeleteTableMutation, useGettableList } from '@/queries/useTable'
 import QrCodeGenerator from '@/components/qr-code-generator'
 import { toast } from 'sonner'
+import Link from 'next/link'
 
 type TableItem = TableListResType['data'][0]
 
@@ -101,6 +106,24 @@ export const columns: ColumnDef<TableItem>[] = [
           tableNumber={row.getValue('number')}
           size={250}
         />
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'tableLink',
+    header: 'Link đặt bàn',
+    cell: ({ row }) => (
+      <div>
+        <Link
+          href={getTableLink({
+            token: row.getValue('token') || '',
+            tableNumber: row.getValue('number') || 0,
+          })}
+          target="_blank"
+          className="underline break-all"
+        >
+          Link bàn số {row.getValue('number')}
+        </Link>
       </div>
     ),
   },

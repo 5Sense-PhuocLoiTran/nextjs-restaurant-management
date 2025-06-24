@@ -1,4 +1,4 @@
-import authApiRequests from '@/apiRequests/auth'
+import guestApiRequests from '@/apiRequests/guest'
 import { cookies } from 'next/headers'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await authApiRequests.sLogout({
+    const result = await guestApiRequests.sLogout({
       accessToken,
       refreshToken,
     })
