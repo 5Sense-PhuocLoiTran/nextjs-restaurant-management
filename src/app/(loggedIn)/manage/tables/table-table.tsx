@@ -74,6 +74,7 @@ export const columns: ColumnDef<TableItem>[] = [
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue('number')}</div>
     ),
+    filterFn: 'includesString',
   },
   {
     accessorKey: 'capacity',
