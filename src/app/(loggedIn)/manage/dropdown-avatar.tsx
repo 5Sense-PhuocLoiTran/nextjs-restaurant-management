@@ -17,7 +17,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function DropdownAvatar() {
-  const { setIsAuth } = useAppContext()
+  const { setRole } = useAppContext()
   const logoutMutation = useLogoutMutation()
   const router = useRouter()
   const { data } = useAccountMe()
@@ -26,7 +26,7 @@ export default function DropdownAvatar() {
   const logout = async () => {
     try {
       await logoutMutation.mutateAsync()
-      setIsAuth(false)
+      setRole(undefined)
       router.push('/login')
     } catch (error) {
       handleErrorApi({

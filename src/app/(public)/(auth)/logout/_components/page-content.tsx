@@ -17,7 +17,7 @@ export default function LogoutContent() {
   const searchParams = useSearchParams()
   const refreshTokenFromUrl = searchParams.get('refreshToken')
   const accessTokenFromUrl = searchParams.get('accessToken')
-  const { setIsAuth } = useAppContext()
+  const { setRole } = useAppContext()
 
   useEffect(() => {
     if (
@@ -32,13 +32,13 @@ export default function LogoutContent() {
         setTimeout(() => {
           ref.current = null
         }, 1000)
-        setIsAuth(false)
+        setRole(undefined)
         router.push('/login')
       })
     } else {
       router.push('/')
     }
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setIsAuth])
+  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setRole])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">

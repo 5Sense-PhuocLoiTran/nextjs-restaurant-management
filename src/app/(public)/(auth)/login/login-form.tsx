@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 export default function LoginForm() {
-  const { setIsAuth, isAuth } = useAppContext()
+  const { setRole, isAuth } = useAppContext()
   const loginMutation = useLoginMutation()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -36,19 +36,19 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (clearToken) {
-      setIsAuth(false)
+      setRole(undefined)
     }
     if (isAuth) {
       router.replace('/')
     }
-  }, [clearToken, setIsAuth, isAuth, router])
+  }, [clearToken, setRole, isAuth, router])
 
   const onSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return
     try {
       const result = await loginMutation.mutateAsync(data)
       toast.success(result.payload.message || 'Login successful')
-      setIsAuth(true)
+      setRole(result.payload.data.account.role)
       router.push('/manage/dashboard')
     } catch (error) {
       handleErrorApi({

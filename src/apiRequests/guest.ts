@@ -33,7 +33,7 @@ const guestApiRequests = {
       }
     ),
   login: (body: GuestLoginBodyType) =>
-    http.post<GuestLoginResType>('/api/auth/login', body, {
+    http.post<GuestLoginResType>('/api/guest/auth/login', body, {
       baseUrl: '',
     }),
   logout: () => http.post('/api/guest/auth/logout', null, { baseUrl: '' }),
