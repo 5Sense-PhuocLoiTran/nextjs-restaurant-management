@@ -6,9 +6,10 @@ import { EntityError } from './http'
 import { toast } from 'sonner'
 import authApiRequests from '@/apiRequests/auth'
 import jwt from 'jsonwebtoken'
-import { DishStatus, OrderStatus, TableStatus } from '@/constants/type'
+import { DishStatus, OrderStatus, Role, TableStatus } from '@/constants/type'
 import envConfig from '@/config'
 import { TokenPayload } from '@/types/jwt.types'
+import guestApiRequests from '@/apiRequests/guest'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -102,7 +103,11 @@ export const checkAndRefreshToken = async (params?: {
   ) {
     // access token is still valid, no need to refresh
     try {
-      const res = await authApiRequests.refreshToken()
+      const role = decodedRefreshToken.role
+      const res =
+        role === Role.Guest
+          ? await guestApiRequests.refreshToken()
+          : await authApiRequests.refreshToken()
 
       setAccessTokenToLocalStorage(res.payload.data.accessToken)
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken)
