@@ -52,12 +52,12 @@ export default function AppProvider({
   const isAuth = Boolean(role)
 
   return (
-    <AppContext value={{ role, setRole, isAuth }}>
+    <AppContext.Provider value={{ role, setRole, isAuth }}>
       <QueryClientProvider client={queryClient}>
         {children}
         <RefreshToken />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
-    </AppContext>
+    </AppContext.Provider>
   )
 }

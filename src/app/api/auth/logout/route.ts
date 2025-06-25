@@ -30,13 +30,13 @@ export async function POST(request: Request) {
 
     return Response.json(result.payload)
   } catch (error) {
+    console.error('Error during logout:', error)
     return Response.json(
       {
-        message: 'An unexpected error occurred during logout.',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        message: 'Lỗi khi gọi API đến server backend',
       },
       {
-        status: 500,
+        status: 200,
       }
     )
   }
