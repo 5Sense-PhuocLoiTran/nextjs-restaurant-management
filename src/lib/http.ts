@@ -98,13 +98,7 @@ const request = async <Response>(
       : options.baseUrl
 
   const fullUrl = `${baseUrl}/${normalizePath(url)}`
-  console.log(`[HTTP ${method}] ${fullUrl}`, {
-    body,
-    headers: {
-      ...baseHeaders,
-      ...options?.headers,
-    },
-  })
+
   const res = await fetch(fullUrl, {
     ...options,
     headers: {

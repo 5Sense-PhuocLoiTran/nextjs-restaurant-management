@@ -2,6 +2,7 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
+    dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         hostname: 'api-bigboy.duthanhduoc.com',
@@ -24,8 +25,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
+        hostname: 'placehold.co',
         pathname: '/**',
       },
     ],
