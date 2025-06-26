@@ -139,6 +139,19 @@ export const getVietnameseDishStatus = (
   }
 }
 
+export const getVietnameseDishStatusOrder = (
+  status: (typeof DishStatus)[keyof typeof DishStatus]
+) => {
+  switch (status) {
+    case DishStatus.Available:
+      return 'Còn món nhen ^^'
+    case DishStatus.Unavailable:
+      return 'Hết món rồi :((('
+    default:
+      return 'Ẩn'
+  }
+}
+
 export const getVietnameseOrderStatus = (
   status: (typeof OrderStatus)[keyof typeof OrderStatus]
 ) => {
