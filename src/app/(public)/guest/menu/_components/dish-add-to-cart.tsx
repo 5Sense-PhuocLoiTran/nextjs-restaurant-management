@@ -13,13 +13,15 @@ type Dish = z.infer<typeof DishSchema>
 
 type Props = {
   dish: Dish
+  onChange: (quantity: number) => void
+  value: number
 }
 
-const DishAddToCart = ({ dish }: Props) => {
-  const [quantity, setQuantity] = useState(1)
+const DishAddToCart = ({ dish, onChange, value }: Props) => {
+  const [quantity, setQuantity] = useState(value)
 
   const increment = () => setQuantity((prev) => prev + 1)
-  const decrement = () => setQuantity((prev) => Math.max(1, prev - 1))
+  const decrement = () => setQuantity((prev) => prev - 1)
 
   return (
     <div className="border rounded-lg shadow hover:shadow-lg transition-shadow">
@@ -49,25 +51,40 @@ const DishAddToCart = ({ dish }: Props) => {
                 <Button
                   type="button"
                   size="icon"
-                  onClick={decrement}
+                  onClick={() => {
+                    decrement()
+                    onChange(value - 1)
+                  }}
+                  disabled={quantity === 0}
                   className="bg-green-100 !text-green-600 hover:bg-green-200 transition-colors rounded-full"
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
                 <Input
-                  id={`quantity-${dish.id}`}
-                  type="number"
+                  type="text"
                   min={1}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={quantity}
-                  onChange={(e) =>
-                    setQuantity(Math.max(1, Number(e.target.value)))
-                  }
-                  className="w-16 text-center"
+                  onChange={(e) => {
+                    const eValue = e.target.value
+                    const numberValue = Number(eValue)
+                    console.log('onChange', 1)
+
+                    if (isNaN(numberValue) || numberValue < 1) return
+                    console.log('onChange', 2)
+                    setQuantity(numberValue)
+                    onChange(numberValue)
+                  }}
+                  className="w-18 text-center"
                 />
                 <Button
                   type="button"
                   size="icon"
-                  onClick={increment}
+                  onClick={() => {
+                    increment()
+                    onChange(value + 1)
+                  }}
                   variant="outline"
                   className="bg-green-600 !text-white hover:bg-green-700 transition-colors rounded-full"
                 >
